@@ -1,0 +1,6 @@
+flask
+pandas
+google-genai
+fredapi
+python-dotenv
+gunicorn

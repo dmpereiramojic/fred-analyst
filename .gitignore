@@ -1,0 +1,19 @@
+# Security: Never commit API keys or environment configuration
+.env
+.env.local
+
+# Python compiled files (creates clutter)
+__pycache__/
+*.pyc
+
+# Virtual Environments (should be recreated locally, not uploaded)
+venv/
+env/
+.venv/
+
+# IDE specific settings (optional but recommended)
+.vscode/
+.idea/
+
+# Mac OS metadata
+.DS_Store
