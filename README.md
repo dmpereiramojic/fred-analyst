@@ -96,6 +96,3 @@ This project is configured for seamless deployment on [Render](https://render.co
 -----
 
 *Disclaimer: This tool uses AI to interpret economic data. While it aims for accuracy, always verify critical financial information with official sources.*
-
-```
-```
