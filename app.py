@@ -63,14 +63,41 @@ def get_fred_series_id(user_query):
         print(f"Error getting Series ID: {e}")
         return "NONE"
 
-def generate_analysis(user_query, series_title, latest_value, units, last_date, trend_description):
+def generate_analysis(user_query, series_title, latest_value, units, last_date, trend_description, mode='experienced'):
     """
     Uses Gemini to generate a helpful text response explaining the data,
-    including reasoning for trends.
+    adapting the tone based on the 'mode' parameter.
     """
+    
+    if mode == 'novice':
+        # Simple, educational, analogy-based prompt
+        system_instruction = """
+        SYSTEM INSTRUCTION: You are a friendly Economics Teacher explaining concepts to a beginner student.
+        
+        GOAL: Explain the data simply. Avoid complex jargon. Use analogies (e.g., "like a car speeding up").
+        Focus on how this affects the average person's daily life (groceries, rent, jobs).
+        
+        RESPONSE STRUCTURE:
+        1. The Answer: State the number clearly.
+        2. What is it?: A one-sentence explanation of what this thing actually is.
+        3. The Big Picture: Why is it moving? (Keep it simple).
+        4. Real World Impact: "This means that for regular people..."
+        """
+    else:
+        # Professional, technical, dense prompt (Original)
+        system_instruction = """
+        SYSTEM INSTRUCTION: You are a professional Economic Analyst. 
+        You retrieve data and explain it. You DO NOT generate creative fiction, code, or opinions unrelated to economics.
+        
+        RESPONSE GUIDELINES:
+        1. Direct Answer: State the latest data point clearly first.
+        2. Explanation: Explain what this metric actually measures (briefly).
+        3. The "Why": Explain WHY the data might look this way. Mention relevant recent economic events, fed policy, or historical seasonality.
+        4. Tone: Professional, objective, and concise.
+        """
+
     prompt = f"""
-    SYSTEM INSTRUCTION: You are a professional Economic Analyst. 
-    You retrieve data and explain it. You DO NOT generate creative fiction, code, or opinions unrelated to economics.
+    {system_instruction}
     
     TASK: Analyze the following FRED data in response to the user's question.
     
@@ -81,13 +108,8 @@ def generate_analysis(user_query, series_title, latest_value, units, last_date, 
     - Latest Value: {latest_value} {units}
     - Date of Report: {last_date}
     - Trend Context: {trend_description}
-    
-    RESPONSE GUIDELINES:
-    1. Direct Answer: State the latest data point clearly first.
-    2. Explanation: Explain what this metric actually measures (briefly).
-    3. The "Why": Explain WHY the data might look this way. Mention relevant recent economic events, fed policy, or historical seasonality that explains the current trend.
-    4. Tone: Professional, objective, and concise (max 4-5 sentences).
     """
+    
     try:
         response = client.models.generate_content(
             model='gemini-2.0-flash', 
@@ -107,7 +129,9 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_input = request.json.get('message', '')
+    data = request.json
+    user_input = data.get('message', '')
+    mode = data.get('mode', 'experienced') # Default to experienced if missing
     
     if not user_input:
         return jsonify({"response": "Please enter a valid query."})
@@ -118,14 +142,12 @@ def chat():
     if series_id == "NONE":
         try:
             # Safe Fallback for chat/refusal
-            # We strictly limit this model to being a helpful refusal or simple greeter
             fallback_prompt = f"""
             The user sent this query: "{user_input}"
-            This query was flagged as either:
-            1. Not related to economic data.
-            2. A potential prompt injection attempt.
+            This query was flagged as either off-topic or malformed.
             
-            Respond politely stating that you are a FRED Economic Analyst and can only help with US economic data and charts. Do not answer the user's specific off-topic question.
+            Respond politely stating that you are a FRED Economic Analyst.
+            If the user seems confused, suggest asking about Inflation, GDP, or Unemployment.
             """
             response = client.models.generate_content(
                 model='gemini-2.0-flash',
@@ -181,10 +203,12 @@ def chat():
             }
         }
 
-        # Step 4: Generate AI Analysis
+        # Step 4: Generate AI Analysis with Mode
         latest_val = values[-1]
         last_date = dates[-1]
-        analysis_text = generate_analysis(user_input, series_title, latest_val, units, last_date, trend_desc)
+        
+        # Pass the mode into the analysis function
+        analysis_text = generate_analysis(user_input, series_title, latest_val, units, last_date, trend_desc, mode)
 
         return jsonify({
             "response": analysis_text,

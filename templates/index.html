@@ -49,6 +49,15 @@
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        /* Toggle Switch Styling */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #2563eb;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #2563eb;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-100 to-blue-50 dark:from-slate-900 dark:to-slate-950 h-screen flex flex-col text-slate-800 dark:text-slate-200 transition-colors duration-300">
@@ -67,7 +76,15 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
+                
+                <!-- Experience Mode Toggle -->
+                <div class="flex items-center bg-slate-200 dark:bg-slate-800 rounded-lg p-1">
+                    <button onclick="setMode('novice')" id="btn-novice" class="px-3 py-1.5 text-xs font-medium rounded-md transition-all">Novice</button>
+                    <button onclick="setMode('experienced')" id="btn-experienced" class="px-3 py-1.5 text-xs font-medium rounded-md transition-all">Pro</button>
+                </div>
+                <div class="h-6 w-px bg-slate-300 dark:bg-slate-700 mx-1"></div>
+
                 <button onclick="resetChat()" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="New Chat">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -142,6 +159,31 @@
         const input = document.getElementById('user-input');
         const welcomeMessage = document.getElementById('welcome-message');
         
+        // Mode State
+        let currentMode = 'experienced'; // Default
+        const btnNovice = document.getElementById('btn-novice');
+        const btnExperienced = document.getElementById('btn-experienced');
+
+        function setMode(mode) {
+            currentMode = mode;
+            if (mode === 'novice') {
+                btnNovice.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
+                btnNovice.classList.remove('text-slate-500');
+                
+                btnExperienced.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
+                btnExperienced.classList.add('text-slate-500');
+            } else {
+                btnExperienced.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
+                btnExperienced.classList.remove('text-slate-500');
+                
+                btnNovice.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
+                btnNovice.classList.add('text-slate-500');
+            }
+        }
+
+        // Initialize Mode
+        setMode('experienced');
+
         // Dark Mode Logic
         const html = document.documentElement;
         const sunIcon = document.getElementById('sun-icon');
@@ -196,10 +238,12 @@
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
+                    body: JSON.stringify({ 
+                        message: message,
+                        mode: currentMode // Send the mode!
+                    })
                 });
                 
-                // If the response is not OK (e.g. 500 error), throw to catch block
                 if (!response.ok) {
                     throw new Error(`Server Error: ${response.statusText}`);
                 }
