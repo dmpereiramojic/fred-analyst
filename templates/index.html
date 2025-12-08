@@ -33,7 +33,12 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
         .message-enter { animation: slideUp 0.4s ease-out forwards; }
+        .modal-enter { animation: fadeIn 0.2s ease-out forwards; }
         
         /* Scrollbar Styling */
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -72,31 +77,21 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-lg tracking-tight text-slate-900 dark:text-white">FRED Analyst</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Powered by Gemini Pro & St. Louis Fed</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Economic Intelligence</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                
-                <!-- Experience Mode Toggle -->
-                <div class="flex items-center bg-slate-200 dark:bg-slate-800 rounded-lg p-1">
-                    <button onclick="setMode('novice')" id="btn-novice" class="px-3 py-1.5 text-xs font-medium rounded-md transition-all">Novice</button>
-                    <button onclick="setMode('experienced')" id="btn-experienced" class="px-3 py-1.5 text-xs font-medium rounded-md transition-all">Pro</button>
-                </div>
-                <div class="h-6 w-px bg-slate-300 dark:bg-slate-700 mx-1"></div>
-
                 <button onclick="resetChat()" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="New Chat">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                 </button>
-
-                <button onclick="toggleDarkMode()" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Toggle Dark Mode">
-                    <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                
+                <button onclick="openSettings()" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </button>
             </div>
@@ -104,7 +99,6 @@
     </header>
 
     <main class="flex-1 w-full max-w-5xl mx-auto p-4 overflow-hidden flex flex-col relative">
-        
         <div id="chat-box" class="flex-1 overflow-y-auto space-y-6 pb-32 no-scrollbar px-2">
             
             <div id="welcome-message" class="flex flex-col items-center justify-center h-full text-center space-y-6 mt-10">
@@ -114,7 +108,7 @@
                     </svg>
                 </div>
                 <h2 class="text-2xl font-semibold text-slate-800 dark:text-white">Economic Intelligence</h2>
-                <p class="text-slate-500 dark:text-slate-400 max-w-md">I can retrieve real-time data from the Federal Reserve, analyze trends, and generate interactive charts.</p>
+                <p class="text-slate-500 dark:text-slate-400 max-w-md">I analyze real-time Federal Reserve data. Configure your API key in settings for unlimited access.</p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
                     <button onclick="sendQuickQuery('What is the current US Inflation Rate?')" class="p-3 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all text-left group">
@@ -124,14 +118,6 @@
                     <button onclick="sendQuickQuery('Show me the 30-Year Mortgage Rate trend')" class="p-3 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all text-left group">
                         <span class="block font-medium text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">🏠 Mortgage Rates</span>
                         <span class="text-slate-400 text-xs">30-Year Fixed Average</span>
-                    </button>
-                    <button onclick="sendQuickQuery('What is the current Unemployment Rate?')" class="p-3 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all text-left group">
-                        <span class="block font-medium text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">👥 Unemployment</span>
-                        <span class="text-slate-400 text-xs">Current US Rate</span>
-                    </button>
-                    <button onclick="sendQuickQuery('Plot Real GDP over the last 10 years')" class="p-3 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all text-left group">
-                        <span class="block font-medium text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">💰 Real GDP</span>
-                        <span class="text-slate-400 text-xs">Inflation Adjusted</span>
                     </button>
                 </div>
             </div>
@@ -149,70 +135,198 @@
                     </button>
                 </form>
             </div>
-            <p class="text-center text-xs text-slate-400 mt-2">AI can make mistakes. Always verify important financial data.</p>
+            <p class="text-center text-xs text-slate-400 mt-2">AI can make mistakes. Verify important financial data.</p>
         </div>
     </main>
+
+    <div id="settings-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] modal-enter">
+            <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                <h3 class="font-semibold text-lg text-slate-800 dark:text-white">Settings</h3>
+                <button onclick="closeSettings()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6 overflow-y-auto">
+                
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h4 class="font-medium text-slate-700 dark:text-slate-200">Dark Mode</h4>
+                        <p class="text-xs text-slate-500">Adjust the appearance</p>
+                    </div>
+                    <button onclick="toggleDarkMode()" id="theme-btn" class="relative inline-flex h-6 w-11 items-center rounded-full bg-slate-200 dark:bg-blue-600 transition-colors">
+                        <span id="theme-toggle-dot" class="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200"></span>
+                    </button>
+                </div>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <div>
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200 mb-3">Analyst Level</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setMode('novice')" id="btn-novice" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center transition-all">
+                            <span class="text-xl block mb-1">🎓</span>
+                            <span class="text-sm font-medium">Novice</span>
+                        </button>
+                        <button onclick="setMode('experienced')" id="btn-experienced" class="p-3 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-center transition-all">
+                            <span class="text-xl block mb-1">💼</span>
+                            <span class="text-sm font-medium text-blue-600 dark:text-blue-400">Pro</span>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Novice mode uses simple analogies. Pro mode uses technical definitions.</p>
+                </div>
+
+                <hr class="border-slate-100 dark:border-slate-800">
+
+                <div class="space-y-3">
+                    <h4 class="font-medium text-slate-700 dark:text-slate-200">Custom Gemini API Key</h4>
+                    <p class="text-xs text-slate-500">Using your own key allows for higher rate limits.</p>
+                    
+                    <input type="password" id="api-key-input" 
+                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
+                        placeholder="AIzaSy...">
+                    
+                    <details class="text-xs text-slate-500 cursor-pointer group">
+                        <summary class="hover:text-blue-600 font-medium list-none flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-open:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            How do I get a key?
+                        </summary>
+                        <div class="pl-4 mt-2 space-y-2 border-l-2 border-slate-200 dark:border-slate-700 ml-1">
+                            <p>1. Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-500 underline">Google AI Studio</a>.</p>
+                            <p>2. Log in with your Google account.</p>
+                            <p>3. Click "Create API Key".</p>
+                            <p>4. Copy the key and paste it above.</p>
+                        </div>
+                    </details>
+                </div>
+
+            </div>
+
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-500/30">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const chatBox = document.getElementById('chat-box');
         const form = document.getElementById('chat-form');
         const input = document.getElementById('user-input');
         const welcomeMessage = document.getElementById('welcome-message');
+        const modal = document.getElementById('settings-modal');
+        const apiKeyInput = document.getElementById('api-key-input');
         
         // Mode State
-        let currentMode = 'experienced'; // Default
+        let currentMode = 'experienced';
         const btnNovice = document.getElementById('btn-novice');
         const btnExperienced = document.getElementById('btn-experienced');
 
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+        });
+
+        // --- Settings / Modal Logic ---
+
+        function openSettings() {
+            modal.classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            modal.classList.add('hidden');
+        }
+
+        function saveSettings() {
+            const key = apiKeyInput.value.trim();
+            if (key) {
+                localStorage.setItem('fred_gemini_key', key);
+            } else {
+                localStorage.removeItem('fred_gemini_key');
+            }
+            localStorage.setItem('fred_mode', currentMode);
+            localStorage.setItem('fred_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            
+            closeSettings();
+            
+            // Show brief toast/notification (Optional simple alert for now)
+            alert("Settings Saved!");
+        }
+
+        function loadSettings() {
+            // Load Key
+            const savedKey = localStorage.getItem('fred_gemini_key');
+            if (savedKey) apiKeyInput.value = savedKey;
+
+            // Load Mode
+            const savedMode = localStorage.getItem('fred_mode');
+            if (savedMode) setMode(savedMode);
+
+            // Load Theme
+            const savedTheme = localStorage.getItem('fred_theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                updateThemeIcon(true);
+            }
+        }
+
+        // --- Mode Logic ---
+
         function setMode(mode) {
             currentMode = mode;
-            if (mode === 'novice') {
-                btnNovice.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
-                btnNovice.classList.remove('text-slate-500');
-                
-                btnExperienced.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
-                btnExperienced.classList.add('text-slate-500');
-            } else {
-                btnExperienced.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
-                btnExperienced.classList.remove('text-slate-500');
-                
-                btnNovice.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-sm');
-                btnNovice.classList.add('text-slate-500');
-            }
+            const activeClass = 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400';
+            const inactiveClass = 'border-slate-200 dark:border-slate-700 text-slate-500';
+
+            // Reset classes
+            btnNovice.className = `p-3 rounded-xl border text-center transition-all ${mode === 'novice' ? activeClass : inactiveClass}`;
+            btnExperienced.className = `p-3 rounded-xl border text-center transition-all ${mode === 'experienced' ? activeClass : inactiveClass}`;
         }
 
-        // Initialize Mode
-        setMode('experienced');
-
-        // Dark Mode Logic
-        const html = document.documentElement;
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
+        // --- Dark Mode Logic ---
 
         function toggleDarkMode() {
+            const html = document.documentElement;
             html.classList.toggle('dark');
             const isDark = html.classList.contains('dark');
+            updateThemeIcon(isDark);
+            
+            // Update Charts if they exist
+            Chart.defaults.color = isDark ? '#94a3b8' : '#475569';
+            Chart.defaults.borderColor = isDark ? '#334155' : '#e2e8f0';
+            Chart.helpers.each(Chart.instances, function(instance){
+                instance.options.scales.x.ticks.color = Chart.defaults.color;
+                instance.options.scales.y.ticks.color = Chart.defaults.color;
+                instance.options.scales.y.grid.color = Chart.defaults.borderColor;
+                instance.update();
+            });
+        }
+
+        function updateThemeIcon(isDark) {
+            const dot = document.getElementById('theme-toggle-dot');
+            const btn = document.getElementById('theme-btn');
             
             if (isDark) {
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-                Chart.defaults.color = '#94a3b8';
-                Chart.defaults.borderColor = '#334155';
+                dot.classList.add('translate-x-6');
+                dot.classList.remove('translate-x-1');
+                btn.classList.add('bg-blue-600');
+                btn.classList.remove('bg-slate-200');
             } else {
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-                Chart.defaults.color = '#475569';
-                Chart.defaults.borderColor = '#e2e8f0';
+                dot.classList.remove('translate-x-6');
+                dot.classList.add('translate-x-1');
+                btn.classList.remove('bg-blue-600');
+                btn.classList.add('bg-slate-200');
             }
         }
 
-        // Reset Chat Logic
+        // --- Chat Logic ---
+
         function resetChat() {
-            // Remove all messages except welcome
             const messages = chatBox.querySelectorAll('.message-enter');
             messages.forEach(msg => msg.remove());
-            
-            // Show welcome message again
             welcomeMessage.style.display = 'flex';
             input.value = '';
             input.focus();
@@ -233,6 +347,9 @@
             input.value = '';
             
             const loaderId = addLoadingSpinner();
+            
+            // Retrieve API Key from Storage
+            const customKey = localStorage.getItem('fred_gemini_key') || "";
 
             try {
                 const response = await fetch('/chat', {
@@ -240,18 +357,18 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         message: message,
-                        mode: currentMode // Send the mode!
+                        mode: currentMode,
+                        custom_api_key: customKey
                     })
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`Server Error: ${response.statusText}`);
-                }
-
                 const data = await response.json();
                 removeLoadingSpinner(loaderId);
-                addMessage('ai', data.response);
 
+                if (data.response) {
+                    addMessage('ai', data.response);
+                }
+                
                 if (data.chart_data) {
                     renderChart(data.chart_data);
                 }
@@ -259,9 +376,11 @@
             } catch (err) {
                 removeLoadingSpinner(loaderId);
                 console.error(err);
-                addMessage('ai', `⚠️ **Connection Error:** \n\nI couldn't talk to the server.`);
+                addMessage('ai', `⚠️ **Connection Error:** \n\nI couldn't reach the server.`);
             }
         });
+
+        // --- Render Helpers (Same as before) ---
 
         function addMessage(role, text) {
             const div = document.createElement('div');
@@ -292,57 +411,40 @@
             const canvas = document.createElement('canvas');
             container.appendChild(canvas);
 
-            // Add Footer with Source and Export Button
+            // Footer (Source & Export)
             const footer = document.createElement('div');
             footer.className = "flex justify-between items-center mt-4 pt-4 border-t border-slate-100 dark:border-slate-700";
             
-            // Source Link
             const sourceLink = document.createElement('a');
             sourceLink.href = chartData.meta.source_link;
             sourceLink.target = "_blank";
             sourceLink.className = "text-xs text-blue-500 hover:text-blue-600 font-medium flex items-center gap-1";
-            sourceLink.innerHTML = `
-                <span>Data Source: FRED (St. Louis Fed)</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-            `;
+            sourceLink.innerHTML = `<span>Source: St. Louis Fed</span> <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>`;
 
-            // Export Button
             const exportBtn = document.createElement('button');
             exportBtn.className = "text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1";
-            exportBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                Download CSV
-            `;
+            exportBtn.innerHTML = `<svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> CSV`;
             
-            // CSV Generation Logic
             exportBtn.onclick = () => {
                 const labels = chartData.chart_data.labels;
                 const values = chartData.chart_data.datasets[0].data;
-                const title = chartData.meta.title;
-                
-                let csvContent = "data:text/csv;charset=utf-8,Date,Value\n";
-                labels.forEach((date, index) => {
-                    csvContent += `${date},${values[index]}\n`;
-                });
-
-                const encodedUri = encodeURI(csvContent);
+                let csvContent = "data:text/csv;charset=utf-8,Date,Value\n" + labels.map((d, i) => `${d},${values[i]}`).join("\n");
                 const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.csv`);
+                link.setAttribute("href", encodeURI(csvContent));
+                link.setAttribute("download", `${chartData.meta.title.replace(/[^a-z0-9]/gi, '_')}.csv`);
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
+                link.remove();
             };
 
             footer.appendChild(sourceLink);
             footer.appendChild(exportBtn);
             container.appendChild(footer);
-
             chatBox.appendChild(container);
 
-            const isDark = html.classList.contains('dark');
-            const gridColor = isDark ? '#334155' : '#f1f5f9';
+            const isDark = document.documentElement.classList.contains('dark');
             const textColor = isDark ? '#94a3b8' : '#475569';
+            const gridColor = isDark ? '#334155' : '#f1f5f9';
 
             new Chart(canvas, {
                 type: 'line',
@@ -351,14 +453,13 @@
                     responsive: true,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        title: { display: true, text: chartData.meta.title, color: textColor, font: { size: 14, family: "'Inter', sans-serif" } },
+                        title: { display: true, text: chartData.meta.title, color: textColor, font: { size: 14 } },
                         legend: { display: false }
                     },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: textColor } },
                         y: { 
                             title: { display: true, text: chartData.meta.units, color: textColor },
-                            border: { dash: [4, 4] },
                             grid: { color: gridColor },
                             ticks: { color: textColor }
                         }
